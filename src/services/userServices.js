@@ -1,5 +1,8 @@
 import db from '../models/index';
 import bcrypt from 'bcrypt';
+import { reject } from 'bcrypt/promises';
+
+
 let handleUserLogin = (email, password) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -19,10 +22,8 @@ let handleUserLogin = (email, password) => {
                     if (checkPass) {
                         userData.errCode = 0;
                         userData.message = 'OK';
-                        console.log(user);
                         // clear pass when show
                         delete user.password;
-                        console.log('xoa pass');
                         console.log(user);
                         userData.user = user;
                     } else {
@@ -62,6 +63,34 @@ let checkUserEmail = (userEmail) => {
     })
 }
 
+let getAllUsers = (userId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let users = '';
+            if (userId === 'ALL' || userId === '') {
+                users = await db.User.findAll({
+                    attributes: {
+                        exclude: ['password']
+                    }
+                });
+            }
+            if (userId && userId !== 'ALL') {
+                users = await db.User.findOne({
+                    attributes: {
+                        exclude: ['password']
+                    },
+                    where: { id: userId }
+                })
+            }
+            resolve(users);
+
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
-    handleUserLogin: handleUserLogin
+    handleUserLogin: handleUserLogin,
+    getAllUsers: getAllUsers
 }
