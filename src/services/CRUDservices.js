@@ -80,7 +80,9 @@ let updateUser = (data) => {
         try {
             let user = await db.User.findOne({
                 where: { Id: data.id }
+                , raw: false
             })
+
             if (user) {
                 user.firstName = data.firstName,
                     user.lastName = data.lastName,
@@ -100,15 +102,18 @@ let updateUser = (data) => {
 
 }
 
-let deleteUserById = (id) => {
+let deleteUserById = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({
-                where: { Id: id }
+                where: { Id: userId }
             })
-            //console.log(user);
+
             if (user) {
-                await user.destroy();
+                //console.log('kt user:', user);
+                await db.User.destroy({
+                    where: { Id: userId }
+                });
             }
             resolve(); //return
 
@@ -124,5 +129,5 @@ module.exports = {
     getAllUser: getAllUser,
     getUserById: getUserById,
     updateUser: updateUser,
-    deleteUserById: deleteUserById
+    deleteUserById: deleteUserById,
 }

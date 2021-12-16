@@ -1,3 +1,4 @@
+import req from 'express/lib/request';
 import userService from '../services/userServices';
 
 
@@ -42,12 +43,36 @@ let handleGetAllUser = async (req, res) => {
     } catch (e) {
         console.log(e);
     }
+}
 
-
+let handleCreateNewUser = async (req, res) => {
+    let message = await userService.createNewUser(req.body);
+    return res.status(200).json(message);
+}
+let handleEditUser = async (req, res) => {
+    let data = req.body;
+    console.log('Du lieu truyen:', data);
+    let message = await userService.updateUser(data);
+    return res.status(200).json(message);
+}
+let handleDeleteUser = async (req, res) => {
+    let id = req.body.id;
+    // console.log('Tim id user xóa:', id);
+    if (!id) {
+        return res.status(400).json({
+            errCode: 1,
+            message: 'Missing required parameter'
+        })
+    }
+    let message = await userService.deleteUser(id);
+    return res.status(200).json(message);
 }
 
 module.exports = {
     handleLogin: handleLogin,
-    handleGetAllUser: handleGetAllUser
+    handleGetAllUser: handleGetAllUser,
+    handleCreateNewUser: handleCreateNewUser,
+    handleEditUser: handleEditUser,
+    handleDeleteUser: handleDeleteUser
 
 }
