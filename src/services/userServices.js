@@ -164,17 +164,26 @@ let deleteUser = (userId) => {
     })
 }
 let updateUser = (userData) => {
+    console.log('Data update NodeJS: ', userData);
+    console.log('Id update NodeJS: ', userData.id);
     return new Promise(async (resolve, reject) => {
         try {
+            if (!userData.id) {
+                resolve({
+                    errCode: 2,
+                    message: 'Missing required parameters'
+                })
+            }
             let user = await db.User.findOne({
                 where: { Id: userData.id }
                 , raw: false
             })
-            //console.log('Tim user xoa:', user.id);
             if (user) {
                 user.firstName = userData.firstName;
                 user.lastName = userData.lastName;
                 user.adress = userData.address;
+                user.phoneNumber = userData.phoneNumber;
+                user.gender = userData.gender;
 
                 await user.save();
                 resolve({
